@@ -1,21 +1,21 @@
-"use client"
+'use client'
 
-import { createContext, useContext, useEffect, useState} from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
 import { getSuabaseClient } from '@/lib/supabase/client'
 
 type AuthContextType = {
   user: User | null
   loading: boolean
-  signIn: (email:string, password:string) => Promise<{error: Error | null}>
-  signUp: (email:string, password:string) => Promise<{error: Error | null}>
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
+  signUp: (email: string, password: string) => Promise<{ error: Error | null }>
   signOut: () => Promise<void>
-  signInWithGithub: () => Promise<{error: Error | null}>
+  signInWithGithub: () => Promise<{ error: Error | null }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export function AuthProvider({ children }: {children: React.ReactNode}) {
+export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = getSuabaseClient()
@@ -27,23 +27,26 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
       setLoading(false)
     })
 
-    const {data: {subscription}} = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
+    // console.log('subscription', subscription)
     return () => subscription.unsubscribe()
   }, [])
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password,
+      password
     })
     return { error }
   }
   const signUp = async (email: string, password: string) => {
     const { error } = await supabase.auth.signUp({
       email,
-      password,
+      password
     })
     return { error }
   }
@@ -55,13 +58,15 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
       provider: 'github',
       options: {
         redirectTo: `${location.origin}/`,
-        scopes: 'read:user user:email', // 明确请求用户邮箱权限
-      },
+        scopes: 'read:user user:email' // 明确请求用户邮箱权限
+      }
     })
     return { error }
   }
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, signInWithGithub }}>
+    <AuthContext.Provider
+      value={{ user, loading, signIn, signUp, signOut, signInWithGithub }}
+    >
       {children}
     </AuthContext.Provider>
   )
@@ -69,7 +74,7 @@ export function AuthProvider({ children }: {children: React.ReactNode}) {
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  console.log('context', context)
+  // console.log('context', context)
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')
   }

@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
+    "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dropdown-menu": "^2.1.15",
     "@supabase/supabase-js": "latest",
+    "blog-cherie-share": "link:",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.536.0",
