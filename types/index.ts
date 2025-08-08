@@ -38,3 +38,28 @@ export interface Comment {
   updated_at: string
   user?: User
 }
+
+export interface ArticleFormProps {
+  title: string
+  date: string
+  author: string
+  readTime: number | ''
+  tags: string[]
+  availableTags: string[]
+  tagsLoading: boolean
+  editSlug: string | null
+  githubUrl: string
+  onGithubUrlChange: (value: string) => void
+  onTitleChange: (value: string) => void
+  onDateChange: (value: string) => void
+  onAuthorChange: (value: string) => void
+  onReadTimeChange: (value: number | '') => void
+  onTagsChange: (value: string[]) => void
+  onNewTagCreated: (tag: string) => void
+}
+
+export interface CollapsibleFormProps extends ArticleFormProps {
+  collapsed: boolean | true
+  isEditing: boolean
+  onCollapsedChange: (value: boolean) => void
+}

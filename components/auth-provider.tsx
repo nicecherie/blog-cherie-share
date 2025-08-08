@@ -31,6 +31,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      // 写入用户信息
+      supabase
+        .from('users')
+        .upsert({
+          id: session?.user.id,
+          email: session?.user.email,
+          username: session?.user.user_metadata.username,
+          display_name: session?.user.user_metadata.display_name,
+          avatar_url: session?.user.user_metadata.avatar_url,
+          bio: session?.user.user_metadata.bio
+        })
+        .then((resp) => {
+          console.log(resp)
+        })
       setLoading(false)
     })
     // console.log('subscription', subscription)
