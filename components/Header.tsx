@@ -26,12 +26,8 @@ export function Header() {
   const { user, signOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
-    console.log('theme', theme)
-  }
   return (
-    <header className="flex justify-between items-center py-4 px-8 bg-white">
+    <header className={`flex justify-between items-center py-4 px-8`}>
       <Link href="/" className="text-2xl font-bold">
         My Blog
       </Link>
@@ -49,10 +45,6 @@ export function Header() {
         </ul>
       </nav>
       <div className="right-content">
-        <Button variant="default" onClick={handleTheme}>
-          <LuSun className="hidden dark:block" />
-          <LuMoon className="block dark:hidden" />
-        </Button>
         {user ? (
           <>
             {/* <Link href="/dashboard">Dashboard</Link> */}
@@ -100,6 +92,13 @@ export function Header() {
             Login
           </Link>
         )}
+        <Button
+          variant="default"
+          onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
+        >
+          <LuSun className="hidden dark:block" />
+          <LuMoon className="block dark:hidden" />
+        </Button>
       </div>
     </header>
   )
