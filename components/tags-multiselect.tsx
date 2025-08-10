@@ -131,7 +131,7 @@ export default function TagsMultiselect({
     <div ref={containerRef} className="relative w-full">
       {/* // 输入框: 点击输入框打开下拉选项*/}
       <div
-        className="flex flex-wrap items-center border border-input gap-2 focus-within:ring-2 rounded-md px-3 text-sm"
+        className="flex flex-wrap items-center border border-input gap-2 focus-within:ring-2 focus-within:ring-ring rounded-md px-3 text-sm"
         onClick={() => setIsOpen(true)}
       >
         {value.map((tag) => (
