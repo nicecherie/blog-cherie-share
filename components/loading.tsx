@@ -1,3 +1,4 @@
+'use client'
 // 创建一个 loading provider
 import { createContext, useContext, useState } from 'react'
 interface LoadingProvider {
@@ -14,6 +15,7 @@ export function LoadingProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+      {/* 加一个loading遮罩层 */}
       {children}
     </LoadingContext.Provider>
   )

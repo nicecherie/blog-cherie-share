@@ -1,11 +1,50 @@
 'use client'
 
+import { useTags } from '@/lib/hooks/use-tags'
 import CollapsibleForm from './components/collapsible-form'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useArticleData } from '@/lib/hooks/use-article-data'
+import { EditorProvider, useEditor } from './context'
+import { useSearchParams } from 'next/navigation'
+
 const PublishContent = ({ children }: { children: React.ReactElement }) => {
+  const { content, setContent, setIsSaving } = useEditor()
+  const searchParams = useSearchParams()
+  const editSlug = searchParams.get('edit')
+  const {
+    articleData,
+    isEditing,
+    updateArticleData,
+    handleNewTagCreated,
+    handleSave
+  } = useArticleData({
+    editSlug,
+    content,
+    setContent,
+    setIsSaving
+  })
   const [collapsed, setCollapsed] = useState(true)
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const { availableTags, tagsLoading, addNewTag } = useTags()
+  const [githubUrl, setGithubUrl] = useState(articleData.github_url ?? '')
+  useEffect(() => {
+    if (articleData.github_url) {
+      setGithubUrl(articleData.github_url)
+    }
+  }, [articleData.github_url])
+
+  const handleGithubUrlChange = (value: string) => {
+    setGithubUrl(value)
+    updateArticleData('github_url', value)
+  }
+
+  const handleNewTagCreatedWithUpdate = (tag: string) => {
+    addNewTag(tag)
+    handleNewTagCreated(tag)
+  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    // 提交表单
+    await handleSave(e)
   }
   return (
     <div className="min-h-screen">
@@ -14,23 +53,23 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
           <CollapsibleForm
             collapsed={collapsed}
             isEditing={false}
-            title=""
-            date=""
-            author=""
-            readTime=""
-            tags={[]}
-            availableTags={[]}
-            tagsLoading={false}
-            editSlug=""
-            githubUrl=""
-            onGithubUrlChange={() => {}}
-            onCollapsedChange={() => {}}
-            onTitleChange={() => {}}
-            onDateChange={() => {}}
-            onAuthorChange={() => {}}
-            onReadTimeChange={() => {}}
-            onTagsChange={() => {}}
-            onNewTagCreated={() => {}}
+            title={articleData.title}
+            date={articleData.date}
+            author={articleData.author}
+            readTime={articleData.readTime}
+            tags={articleData.tags}
+            availableTags={availableTags}
+            tagsLoading={tagsLoading}
+            editSlug={editSlug}
+            githubUrl={githubUrl}
+            onGithubUrlChange={handleGithubUrlChange}
+            onCollapsedChange={setCollapsed}
+            onTitleChange={(val) => updateArticleData('title', val)}
+            onDateChange={(val) => updateArticleData('date', val)}
+            onAuthorChange={(val) => updateArticleData('author', val)}
+            onReadTimeChange={(val) => updateArticleData('readTime', val)}
+            onTagsChange={(val) => updateArticleData('tags', val)}
+            onNewTagCreated={handleNewTagCreatedWithUpdate}
           />
           {/* markdown */}
           <div className="bg-card">{children}</div>
@@ -42,11 +81,14 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
 
 const PublishLayout = ({ children }: { children: React.ReactElement }) => {
   return (
-    <div className="flex flex-col items-center">
-      <div className="w-full max-w-4xl">
-        <PublishContent>{children}</PublishContent>
+    <EditorProvider>
+      {/* // TODO: add a loading state */}
+      <div className="flex flex-col items-center">
+        <div className="w-full max-w-4xl">
+          <PublishContent>{children}</PublishContent>
+        </div>
       </div>
-    </div>
+    </EditorProvider>
   )
 }
 

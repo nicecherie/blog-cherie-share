@@ -3,8 +3,14 @@ import { createServerClient } from '@/lib/supabase/server'
 export default async function Categories() {
   const supbase = createServerClient()
   // 获取10篇文章
-  const { data: posts } = await supbase.from('posts').select('*').limit(10)
+  const { data: posts } = await supbase
+    .from('post_categories')
+    // .select('*')
+    .select('*,posts(*)')
+    .limit(10)
 
+  const { data: post2 } = await supbase.from('posts').select('*').limit(10)
+  console.log('posts', posts, post2)
   // todo: 设计categories 数据表和 posts 关联
   // 1. 请求这个 post_category 表，随便来 10条数据
   // 2. 根据 post_category，请求 posts 表

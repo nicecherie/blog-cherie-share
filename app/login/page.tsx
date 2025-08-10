@@ -13,15 +13,16 @@ import {
 import Link from 'next/link'
 import { useState } from 'react'
 import { useAuth } from '@/components/auth-provider'
-
 import { DiGithubBadge } from 'react-icons/di'
+import { useLoading } from '@/components/loading'
 export default function Login() {
   const [isGitHubLogin, setIsGitHubLogin] = useState(false)
   const { signIn, signInWithGithub } = useAuth()
+  const { isLoading, setIsLoading } = useLoading()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  // const [isLoading, setIsLoading] = useState(false)
   const handleGitHubLogin = async () => {
     setIsGitHubLogin(true)
     try {

@@ -13,7 +13,6 @@ export const useTags = () => {
       const {
         data: { session }
       } = await supabase.auth.getSession()
-      console.log('session', session)
 
       if (!session) {
         setAvailableTags([])
@@ -33,10 +32,37 @@ export const useTags = () => {
         }
         console.log('User logged in, fetching tags from database...')
 
-        const { data, error } = await supabase.from('tags').select('*')
-
-        console.log('data', data)
+        const { data, error } = await supabase
+          .from('post_categories')
+          .select('title')
+          .order('title', { ascending: true })
+        if (error) {
+          console.error('Error fetching tags:', error)
+          console.error('Error details:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code
+          })
+          setAvailableTags([])
+        } else if (data) {
+          console.log('Tags fetched successfully:', data)
+          const tagTitles = (data as { title: string }[]).map(
+            (tag) => tag.title
+          )
+          setAvailableTags(tagTitles)
+        } else {
+          console.warn('No data returned from tags query')
+          setAvailableTags([])
+        }
       } catch (error) {
+        console.error('Unexpected error fetching initial tags:', error)
+        console.error('Error type:', typeof error)
+        console.error(
+          'Error stack:',
+          error instanceof Error ? error.stack : 'No stack trace'
+        )
+        setAvailableTags([])
       } finally {
         setTagsLoading(false)
       }
@@ -44,7 +70,11 @@ export const useTags = () => {
     fetchTags()
   }, [])
 
-  const addNewTag = () => {}
+  const addNewTag = (newTag: string) => {
+    if (!availableTags.includes(newTag)) {
+      setAvailableTags([...availableTags, newTag].sort())
+    }
+  }
   return {
     availableTags,
     tagsLoading,
