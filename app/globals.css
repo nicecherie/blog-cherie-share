@@ -24,7 +24,7 @@
   --color-popover: hsl(0 0% 100%);
 
   --color-tag-bg: #da9852;
-  --color-card: hsl(0 0% 100%);
+  /* --color-card: var(--color-primary); */
 
   /* --text-popover-foreground: hsl(222.2 47.4% 11.2%); */
   --radius-xs: 0.5rem;
@@ -71,4 +71,8 @@ button {
 
 .container {
   @apply max-w-7xl mx-auto;
+}
+
+.tiptap {
+  @apply focus-visible:outline-none min-h-200;
 }

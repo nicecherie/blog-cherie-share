@@ -125,14 +125,14 @@ export const useArticleData = ({
         {
           slug,
           title: articleData.title,
-          date: articleData.date,
-          author: articleData.author,
-          read_time: articleData.readTime === '' ? null : articleData.readTime,
+          // date: articleData.date,
+          // author: articleData.author,
+          // read_time: articleData.readTime === '' ? null : articleData.readTime,
           tags: articleData.tags,
           content,
-          lastModified: new Date().toISOString(),
-          user_id: session?.user.id,
-          github_url: articleData.github_url
+          // lastModified: new Date().toISOString(),
+          author_id: session?.user.id
+          // github_url: articleData.github_url
         },
         { onConflict: 'slug' }
       )

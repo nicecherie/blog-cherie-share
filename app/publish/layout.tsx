@@ -7,8 +7,9 @@ import { useArticleData } from '@/lib/hooks/use-article-data'
 import { EditorProvider, useEditor } from './context'
 import { useSearchParams } from 'next/navigation'
 
+import { SaveButton } from './components/save-button'
 const PublishContent = ({ children }: { children: React.ReactElement }) => {
-  const { content, setContent, setIsSaving } = useEditor()
+  const { content, setContent, isSaving, setIsSaving } = useEditor()
   const searchParams = useSearchParams()
   const editSlug = searchParams.get('edit')
   const {
@@ -73,6 +74,7 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
           />
           {/* markdown */}
           <div className="bg-card">{children}</div>
+          <SaveButton isSaving={isSaving} />
         </form>
       </div>
     </div>

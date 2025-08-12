@@ -135,7 +135,10 @@ export default function TagsMultiselect({
         onClick={() => setIsOpen(true)}
       >
         {value.map((tag) => (
-          <span className="flex items-center gap-1 rounded px-1 my-1 text-white bg-tag-bg ">
+          <span
+            key={tag}
+            className="flex items-center gap-1 rounded px-1 my-1 text-white bg-tag-bg "
+          >
             {tag}
             <button
               className="text-white hover:text-sky-200"
