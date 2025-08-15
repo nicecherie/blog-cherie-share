@@ -37,8 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .upsert({
           id: session?.user.id,
           email: session?.user.email,
-          username: session?.user.user_metadata.username,
-          display_name: session?.user.user_metadata.display_name,
+          username: session?.user.user_metadata.user_name,
+          name: session?.user.user_metadata.name,
           avatar_url: session?.user.user_metadata.avatar_url,
           bio: session?.user.user_metadata.bio
         })
