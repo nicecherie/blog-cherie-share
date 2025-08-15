@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { getSuabaseClient } from '../supabase/client'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 
 interface ArticleData {
   title: string
@@ -48,7 +48,7 @@ export const useArticleData = ({
     content: '',
     github_url: ''
   })
-  const router = useRouter()
+  // const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
   const [newlyCreatedTag, setNewlyCreatedTag] = useState<string[]>([])
 
@@ -84,7 +84,7 @@ export const useArticleData = ({
       localStorage.setItem('unsavePost', JSON.stringify(postData))
 
       const redirectUrl = `/write${editSlug ? `?edit=${editSlug}` : ''}`
-      router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
+      // router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
       setIsSaving(false)
       return
     }
@@ -126,7 +126,7 @@ export const useArticleData = ({
           slug,
           title: articleData.title,
           // date: articleData.date,
-          // author: articleData.author,
+          author_name: session?.user.user_metadata.full_name,
           // read_time: articleData.readTime === '' ? null : articleData.readTime,
           tags: articleData.tags,
           content,
@@ -136,7 +136,6 @@ export const useArticleData = ({
         },
         { onConflict: 'slug' }
       )
-      console.log('articleData12313123', articleData)
       if (insertPostError) throw insertPostError
 
       localStorage.removeItem('unsavedPost')
