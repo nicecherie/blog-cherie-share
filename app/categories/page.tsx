@@ -1,28 +1,47 @@
 import { createServerClient } from '@/lib/supabase/server'
+import { Category, Post } from '@/types'
+import Link from 'next/link'
+
+interface categoriesPost extends Category {
+  posts: Post[]
+}
+async function getCategories() {
+  const supabase = createServerClient()
+
+  const { data: categories, error } = await supabase
+    .from('post_categories')
+    .select('*,posts(*)')
+  if (error) {
+    console.log('error', error)
+    return []
+  }
+  return categories as categoriesPost[]
+}
 
 export default async function Categories() {
-  const supbase = createServerClient()
-  // 获取10篇文章
-  const { data: posts } = await supbase
-    .from('post_categories')
-    // .select('*')
-    .select('*,posts(*)')
-    .limit(10)
-
-  const { data: post2 } = await supbase.from('posts').select('*').limit(10)
-  console.log('posts', posts, post2)
-  // todo: 设计categories 数据表和 posts 关联
-  // 1. 请求这个 post_category 表，随便来 10条数据
-  // 2. 根据 post_category，请求 posts 表
-  // 参考网站：https://www.zyzy.info/categories/%E5%85%A8%E6%A0%88
+  const categories = await getCategories()
+  console.log(categories)
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <section>
-        <h1>我的博客</h1>
-      </section>
-
-      <div>{posts?.map((post) => JSON.stringify(post))}</div>
+    <div className="container mx-auto px-4 py-5">
+      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        {categories?.map((cate) => (
+          <Link
+            key={cate.category_id + Math.random()}
+            href={`/categories/${cate.title}`}
+          >
+            <div className="cursor-pointer bg-card hover:bg-muted shadow-sm shadow-ring p-6 rounded-lg group">
+              <h2 className="text-xl text-ring mb-3 font-bold group-hover:text-ring-foreground">
+                {cate.title}
+              </h2>
+              <span className="text-sm text-muted-foreground">
+                共 {cate.posts.length} 篇文章
+              </span>
+              {/* <div className="all">{JSON.stringify(cate)}</div> */}
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }

@@ -12,7 +12,7 @@
   --color-primary-foreground: hsl(210 40% 98%);
   --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
   --color-muted: hsl(210 40% 96.1%);
-  --color-muted-foreground: hsl(215.4 16.3% 46.9%);
+  --color-muted-foreground: #64748b;
   --color-accent: hsl(210 40% 96.1%);
   --color-accent-foreground: hsl(222.2 47.4% 11.2%);
   --color-destructive: hsl(0 84.2% 60.2%);
@@ -20,11 +20,12 @@
   --color-border: hsl(214.3 31.8% 91.4%);
   --color-input: hsl(214.3 31.8% 91.4%);
   --color-ring: #da9852;
+  --color-ring-foreground: #ffcb6f;
   --color-popover-foreground: hsl(222.2 84% 4.9%);
   --color-popover: hsl(0 0% 100%);
 
   --color-tag-bg: #da9852;
-  /* --color-card: var(--color-primary); */
+  --color-card: #fff;
 
   /* --text-popover-foreground: hsl(222.2 47.4% 11.2%); */
   --radius-xs: 0.5rem;

@@ -23,9 +23,9 @@ export interface User {
 }
 
 export interface Category {
-  id: string
+  category_id: string
   name: string
-  slug: string
+  title: string
   description: string | null
 }
 
