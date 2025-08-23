@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useArticleData } from '@/lib/hooks/use-article-data'
 import { EditorProvider, useEditor } from './context'
 import { useSearchParams } from 'next/navigation'
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 import { SaveButton } from './components/save-button'
 const PublishContent = ({ children }: { children: React.ReactElement }) => {
@@ -75,8 +76,7 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             onNewTagCreated={handleNewTagCreatedWithUpdate}
           />
           {/* markdown */}
-          <h2 className="text-lg font-semibold">文章正文编辑</h2>
-          <div className="bg-card">{children}</div>
+          <div className="bg-card mt-2">{children}</div>
           <SaveButton isSaving={isSaving} />
         </form>
       </div>

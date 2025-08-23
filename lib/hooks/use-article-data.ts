@@ -1,6 +1,7 @@
 'use client'
 import React, { useEffect, useState } from 'react'
 import { getSuabaseClient } from '../supabase/client'
+import { useToast } from '@/components/toast/toast-provider'
 // import { useRouter } from 'next/navigation'
 
 interface ArticleData {
@@ -54,6 +55,7 @@ export const useArticleData = ({
   const [isEditing, setIsEditing] = useState(false)
   const [newlyCreatedTag, setNewlyCreatedTag] = useState<string[]>([])
 
+  const { showToast } = useToast()
   const updateArticleData = (
     field: keyof ArticleData,
     value: string | number | string[]
@@ -84,7 +86,7 @@ export const useArticleData = ({
       console.error('User not logged in')
       const postData = { ...articleData, content }
       localStorage.setItem('unsavePost', JSON.stringify(postData))
-
+      // TODO: 跳转至文章编辑页，后续可以去缓存中拿文章数据
       const redirectUrl = `/write${editSlug ? `?edit=${editSlug}` : ''}`
       // router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
       setIsSaving(false)
@@ -114,12 +116,14 @@ export const useArticleData = ({
         // TODO: 获取数据库中已存在的 tag，判断是否要给新的 created_at 或 updated_at
         const tagsToInsert = newlyCreatedTag.map((tag) => ({
           title: tag,
-          create_time: new Date()
+          create: new Date()
         }))
         const { error: insertTagsError } = await supabase
           .from('post_categories')
           .upsert(tagsToInsert, { onConflict: 'title' })
-        if (insertTagsError) throw insertTagsError
+        if (insertTagsError) {
+          showToast(insertTagsError?.message, 'error')
+        }
       }
 
       const slug = editSlug || generateSlug(articleData.title)
@@ -143,7 +147,8 @@ export const useArticleData = ({
       if (insertPostError) throw insertPostError
 
       localStorage.removeItem('unsavedPost')
-      // TODO: toast 提示用户保存成功
+      // toast 提示用户保存成功
+      showToast('提交成功！', 'success')
     } catch (err: unknown) {
       const errorMessage = '保存失败，请检查网络或联系管理员。'
       if (err && typeof err === 'object' && 'message' in err) {
@@ -155,7 +160,7 @@ export const useArticleData = ({
         console.error('Error saving post:', errorMessage)
       }
       // TODO: toast 提示用户错误
-      // showToast(errorMessage, 'error')
+      showToast(errorMessage, 'error')
     } finally {
       setIsSaving(false)
     }

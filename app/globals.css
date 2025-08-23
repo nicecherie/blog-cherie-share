@@ -24,7 +24,7 @@
   --color-popover-foreground: hsl(222.2 84% 4.9%);
   --color-popover: hsl(0 0% 100%);
 
-  --color-selected: #00e936;
+  --color-selected: #27c24b;
   --color-tag-bg: #da9852;
   --color-card: #fff;
 
@@ -70,7 +70,9 @@ body {
 button {
   cursor: pointer;
 }
-
+Label {
+  @apply block text-sm font-medium my-2;
+}
 .container {
   @apply max-w-7xl mx-auto;
 }
@@ -81,5 +83,9 @@ button {
 
 .radio-group button {
   all: unset;
-  width: 10px;
+  @apply cursor-pointer w-2.5 h-2.5 rounded-full;
+}
+
+.radio-group Label {
+  cursor: pointer;
 }

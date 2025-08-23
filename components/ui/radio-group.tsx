@@ -29,7 +29,7 @@ const RadioGroupItem = ({ className, ...props }: RadioGroupItemProps) => {
   return (
     <RadioGroupPrimitive.Item className={cn('', className)} {...props}>
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-current text-current text-sky-500" />
+        <Circle className="h-2.5 w-2.5 fill-current text-current text-selected" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   )
