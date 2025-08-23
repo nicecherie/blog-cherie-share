@@ -24,6 +24,7 @@
   --color-popover-foreground: hsl(222.2 84% 4.9%);
   --color-popover: hsl(0 0% 100%);
 
+  --color-selected: #00e936;
   --color-tag-bg: #da9852;
   --color-card: #fff;
 
@@ -76,4 +77,9 @@ button {
 
 .tiptap {
   @apply focus-visible:outline-none min-h-200;
+}
+
+.radio-group button {
+  all: unset;
+  width: 10px;
 }

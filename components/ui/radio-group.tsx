@@ -10,6 +10,11 @@ interface RadioGroupProps extends RadioGroupPrimitive.RadioGroupProps {
   ref?: React.RefObject<HTMLDivElement>
 }
 
+interface RadioGroupItemProps extends RadioGroupPrimitive.RadioGroupItemProps {
+  className?: string
+  ref?: React.RefObject<HTMLButtonElement>
+}
+
 const RadioGroup = ({ className, ref, ...props }: RadioGroupProps) => {
   return (
     <RadioGroupPrimitive.Root
@@ -20,11 +25,11 @@ const RadioGroup = ({ className, ref, ...props }: RadioGroupProps) => {
   )
 }
 
-const RadioGroupItem = ({ value = 'public' }: { value: string }) => {
+const RadioGroupItem = ({ className, ...props }: RadioGroupItemProps) => {
   return (
-    <RadioGroupPrimitive.Item value={value} className={cn()}>
+    <RadioGroupPrimitive.Item className={cn('', className)} {...props}>
       <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-current text-current" />
+        <Circle className="h-2.5 w-2.5 fill-current text-current text-sky-500" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   )

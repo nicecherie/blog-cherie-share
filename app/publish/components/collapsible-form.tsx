@@ -40,10 +40,10 @@ export default function CollapsibleForm({
   const { availableTags, tagsLoading, addNewTag } = useTags()
   const [isPrivate, setIsPrivate] = useState('private')
   const handleRadioChange = (value: string) => {
-    console.log(value, 'event')
-    // const target = event.target as HTMLInputElement;
-    //     onVisibilityChange(target)
+    setIsPrivate(value as 'private' | 'public')
+    onVisibilityChange(value as 'private' | 'public')
   }
+
   return (
     <Card className="max-w-7xl mx-auto">
       <Collapsible
@@ -83,13 +83,25 @@ export default function CollapsibleForm({
           </div>
           <div className="space-y-2">
             <Label>可见性</Label>
-            <RadioGroup value={isPrivate} onValueChange={handleRadioChange}>
+            <RadioGroup
+              value={visibility}
+              onValueChange={handleRadioChange}
+              className="radio-group"
+            >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="private" />
+                <RadioGroupItem
+                  value="private"
+                  id="private"
+                  className="radio-item flex-1"
+                />
                 <Label htmlFor="private">私有 - 仅登录用户可见</Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="public" />
+                <RadioGroupItem
+                  value="public"
+                  id="public"
+                  className="radio-item flex-1"
+                />
                 <Label htmlFor="public">公开 - 所有人可见</Label>
               </div>
             </RadioGroup>
