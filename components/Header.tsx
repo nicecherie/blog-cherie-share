@@ -25,22 +25,24 @@ export function Header() {
   const { theme, setTheme } = useTheme()
   const { user, signOut } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
+  console.log(user, 'user')
 
   return (
     <header className={`flex justify-between items-center py-4 px-8`}>
       <Link href="/" className="text-2xl font-bold">
-        My Blog
+        {user?.user_metadata?.name ? user?.user_metadata?.name + "'s" : 'my'}{' '}
+        blog
       </Link>
       <nav>
         <ul className="flex space-x-4">
           <li>
-            <Link href="/">Home</Link>
+            <Link href="/">首页</Link>
           </li>
           <li>
-            <Link href="/categories">Categories</Link>
+            <Link href="/categories">分类</Link>
           </li>
           <li>
-            <Link href="/publish">Publish</Link>
+            <Link href="/publish">新文章</Link>
           </li>
         </ul>
       </nav>

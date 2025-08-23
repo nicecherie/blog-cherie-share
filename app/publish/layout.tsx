@@ -57,6 +57,7 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             title={articleData.title}
             date={articleData.date}
             author={articleData.author}
+            visibility={articleData.visibility}
             readTime={articleData.readTime}
             tags={articleData.tags}
             availableTags={availableTags}
@@ -66,6 +67,7 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             onGithubUrlChange={handleGithubUrlChange}
             onCollapsedChange={setCollapsed}
             onTitleChange={(val) => updateArticleData('title', val)}
+            onVisibilityChange={(val) => updateArticleData('visibility', val)}
             onDateChange={(val) => updateArticleData('date', val)}
             onAuthorChange={(val) => updateArticleData('author', val)}
             onReadTimeChange={(val) => updateArticleData('readTime', val)}
@@ -73,6 +75,7 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             onNewTagCreated={handleNewTagCreatedWithUpdate}
           />
           {/* markdown */}
+          <h2 className="text-lg font-semibold">文章正文编辑</h2>
           <div className="bg-card">{children}</div>
           <SaveButton isSaving={isSaving} />
         </form>

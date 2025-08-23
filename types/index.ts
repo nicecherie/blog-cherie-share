@@ -43,12 +43,14 @@ export interface ArticleFormProps {
   title: string
   date: string
   author: string
+  visibility: 'public' | 'private'
   readTime: number | ''
   tags: string[]
   availableTags: string[]
   tagsLoading: boolean
   editSlug: string | null
   githubUrl: string
+  onVisibilityChange: (value: string) => void
   onGithubUrlChange: (value: string) => void
   onTitleChange: (value: string) => void
   onDateChange: (value: string) => void

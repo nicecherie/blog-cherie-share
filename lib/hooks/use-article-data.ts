@@ -7,6 +7,7 @@ interface ArticleData {
   title: string
   date: string
   author: string
+  visibility: 'public' | 'private'
   readTime: number | ''
   tags: string[]
   content: string
@@ -43,6 +44,7 @@ export const useArticleData = ({
     title: '',
     date: '',
     author: '',
+    visibility: 'public',
     readTime: '',
     tags: [],
     content: '',
@@ -130,6 +132,8 @@ export const useArticleData = ({
           // read_time: articleData.readTime === '' ? null : articleData.readTime,
           tags: articleData.tags,
           content,
+          visibility: articleData.visibility,
+
           // lastModified: new Date().toISOString(),
           author_id: session?.user.id
           // github_url: articleData.github_url
