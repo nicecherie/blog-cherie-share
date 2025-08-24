@@ -9,8 +9,8 @@
   --color-secondary-dark: #eee; */
 }
 @theme {
-  --color-background: #fff;
-  --color-foreground: #2e2930;
+  --color-background: #f9f3e4;
+  --color-foreground: #0c1522;
   --color-primary-foreground: #fff;
   --color-secondary-foreground: #000;
   --color-muted: #666;
@@ -28,7 +28,6 @@
 
   --color-selected: #27c24b;
   --color-tag-bg: #da9852;
-  /* --color-card: #fff; */
 
   /* --text-popover-foreground: hsl(222.2 47.4% 11.2%); */
   --radius-xs: 0.5rem;
@@ -85,7 +84,8 @@ Label {
 
 .radio-group button {
   all: unset;
-  @apply cursor-pointer w-2.5 h-2.5 rounded-full;
+  /* [data-state="unchecked"] */
+  @apply cursor-pointer w-2.5 h-2.5 rounded-full border border-primary;
 }
 
 .radio-group Label {
@@ -93,6 +93,12 @@ Label {
 }
 
 @layer utilities {
+  .bg-card {
+    @apply bg-white;
+  }
+  .dark .bg-card {
+    @apply bg-black;
+  }
   .dark .bg-grid {
     background-color: #0c1522;
     background-image: linear-gradient(

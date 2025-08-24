@@ -174,7 +174,7 @@ export default function TagsMultiselect({
             filteredOptions.map((tag, index) => (
               <li
                 key={tag}
-                className={`px-4 py-2 cursor-pointer hover:bg-tag-bg hover:text-white text-foreground ${
+                className={`px-4 py-2 cursor-pointer dark:text-white hover:bg-tag-bg hover:text-white text-foreground ${
                   index === highlightedIndex ? 'bg-tag-bg text-white' : ''
                 }`}
                 onClick={() => handleSelectOption(tag)}

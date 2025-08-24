@@ -30,7 +30,7 @@ export default async function Categories() {
             key={cate.category_id + Math.random()}
             href={`/categories/${cate.title}`}
           >
-            <div className="cursor-pointer bg-card hover:bg-muted shadow-sm shadow-ring p-6 rounded-lg group">
+            <div className="cursor-pointer bg-card hover:shadow-sm shadow-ring p-6 rounded-lg group">
               <h2 className="text-xl text-ring mb-3 font-bold group-hover:text-ring-foreground">
                 {cate.title}
               </h2>

@@ -3,8 +3,9 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { AuthProvider } from '@/components/auth-provider'
 import { ToastProvider } from '@/components/toast/toast-provider'
 import './globals.css'
-import type Metadata from 'next'
+import type { Metadata } from 'next'
 import { LoadingProvider } from '@/components/loading'
+import Footer from '@/components/footer'
 
 export const metadata: Metadata = {
   title: "cherie's blog",
@@ -27,11 +28,7 @@ export default function RootLayout({
                 <main className="flex-1 bg-grid">
                   <LoadingProvider>{children}</LoadingProvider>
                 </main>
-                <footer className="py-2">
-                  <div className="container mx-auto text-center text-sm px-4 text-muted-foreground">
-                    © {new Date().getFullYear()} cherie. 保留所有权利.
-                  </div>
-                </footer>
+                <Footer />
               </div>
             </ToastProvider>
           </AuthProvider>
