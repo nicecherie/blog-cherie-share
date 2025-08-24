@@ -87,7 +87,7 @@ export default function CollapsibleForm({
                 onValueChange={handleRadioChange}
                 className="radio-group"
               >
-                <div className="flex items-center space-x-2 gap-2">
+                <div className="flex items-center space-x-2 gap-2 text-muted dark:text-muted-foreground">
                   <RadioGroupItem
                     value="private"
                     id="private"
@@ -95,7 +95,7 @@ export default function CollapsibleForm({
                   />
                   <Label htmlFor="private">私有 - 仅登录用户可见</Label>
                 </div>
-                <div className="flex items-center space-x-2 gap-2">
+                <div className="flex items-center space-x-2 gap-2 text-muted dark:text-muted-foreground">
                   <RadioGroupItem
                     value="public"
                     id="public"

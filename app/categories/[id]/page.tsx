@@ -16,7 +16,11 @@ async function getPostsByCategory(title: string) {
   return posts
 }
 
-export async function CategoryPage({ params }: { params: { title: string } }) {
+export default async function CategoryPage({
+  params
+}: {
+  params: { title: string }
+}) {
   // const posts = await getPostsByCategory(params.title)
   // console.log('posts', posts)
   return (

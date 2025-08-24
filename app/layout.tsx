@@ -24,7 +24,7 @@ export default function RootLayout({
             <ToastProvider>
               <div className="flex flex-col min-h-screen">
                 <Header />
-                <main className="flex-1">
+                <main className="flex-1 bg-grid">
                   <LoadingProvider>{children}</LoadingProvider>
                 </main>
                 <footer className="py-2">

@@ -193,7 +193,7 @@ const RichTextEditor = ({
   }
   return (
     <Card className="border rounded-md overflow-hidden">
-      <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/50">
+      <div className="flex flex-wrap gap-1 p-2 border-b border-b-muted">
         <Button
           variant="ghost"
           onClick={() => editor.chain().focus().toggleBold().run()}

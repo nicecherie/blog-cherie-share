@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { useArticleData } from '@/lib/hooks/use-article-data'
 import { EditorProvider, useEditor } from './context'
 import { useSearchParams } from 'next/navigation'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 
 import { SaveButton } from './components/save-button'
 const PublishContent = ({ children }: { children: React.ReactElement }) => {

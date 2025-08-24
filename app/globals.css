@@ -2,19 +2,21 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme static {
-  --color-primary: hsl(222.2 47.4% 11.2%);
-  --color-secondary: hsl(210 40% 96.1%);
+  --color-primary: #da9852;
+  --color-secondary: #3d0f3f;
+  /* background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%); */
+  /* --color-primary-dark: #5654a2;
+  --color-secondary-dark: #eee; */
 }
-
 @theme {
-  --color-background: 0 0% 100%;
-  --color-foreground: #171717;
-  --color-primary-foreground: hsl(210 40% 98%);
-  --color-secondary-foreground: hsl(222.2 47.4% 11.2%);
-  --color-muted: hsl(210 40% 96.1%);
-  --color-muted-foreground: #64748b;
-  --color-accent: hsl(210 40% 96.1%);
-  --color-accent-foreground: hsl(222.2 47.4% 11.2%);
+  --color-background: #fff;
+  --color-foreground: #2e2930;
+  --color-primary-foreground: #fff;
+  --color-secondary-foreground: #000;
+  --color-muted: #666;
+  --color-muted-foreground: #888;
+  --color-accent: #ffd373;
+  --color-accent-foreground: #3d0f3f;
   --color-destructive: hsl(0 84.2% 60.2%);
   --color-destructive-foreground: hsl(210 40% 98%);
   --color-border: hsl(214.3 31.8% 91.4%);
@@ -26,7 +28,7 @@
 
   --color-selected: #27c24b;
   --color-tag-bg: #da9852;
-  --color-card: #fff;
+  /* --color-card: #fff; */
 
   /* --text-popover-foreground: hsl(222.2 47.4% 11.2%); */
   --radius-xs: 0.5rem;
@@ -88,4 +90,25 @@ Label {
 
 .radio-group Label {
   cursor: pointer;
+}
+
+@layer utilities {
+  .dark .bg-grid {
+    background-color: #0c1522;
+    background-image: linear-gradient(
+        rgba(255, 255, 255, 0.04) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+  .bg-grid {
+    background-color: #f9f3e4;
+    background-image: linear-gradient(
+        rgba(141, 169, 206, 0.06) 1px,
+        transparent 1px
+      ),
+      linear-gradient(90deg, rgba(141, 169, 206, 0.06) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
 }
