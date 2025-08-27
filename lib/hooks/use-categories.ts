@@ -2,15 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import { getSuabaseClient } from '../supabase/client'
-
+import { Category } from '@/types'
+import { useToast } from '@/components/toast/toast-provider'
 export const useTags = () => {
-  const [availableTags, setAvailableTags] = useState<string[]>([])
+  const [availableTags, setAvailableTags] = useState<Category[]>([])
   const [tagsLoading, setTagsLoading] = useState(false)
+  const supabase = getSuabaseClient()
+  const { showToast } = useToast()
 
   useEffect(() => {
     // 获取所有标签
     const fetchTags = async () => {
-      const supabase = getSuabaseClient()
+      // 判断是否登录
       const {
         data: { session }
       } = await supabase.auth.getSession()
@@ -35,7 +38,7 @@ export const useTags = () => {
 
         const { data, error } = await supabase
           .from('post_categories')
-          .select('title')
+          .select('category_id, title')
           .order('title', { ascending: true })
         if (error) {
           console.error('Error fetching tags:', error)
@@ -47,11 +50,12 @@ export const useTags = () => {
           })
           setAvailableTags([])
         } else if (data) {
-          console.log('Tags fetched successfully:', data)
-          const tagTitles = (data as { title: string }[]).map(
-            (tag) => tag.title
-          )
-          setAvailableTags(tagTitles)
+          console.log('Tags fetched successfully:', data, availableTags)
+          // const tagTitles = (data as { title: string }[]).map(
+          //   (tag) => tag.title
+          // )
+          // 过滤掉 title 为 null 的项（如果需要）
+          setAvailableTags(data as Category[])
         } else {
           console.warn('No data returned from tags query')
           setAvailableTags([])
@@ -71,11 +75,22 @@ export const useTags = () => {
     fetchTags()
   }, [])
 
-  // TODO: 新增标签
-  const addNewTag = (newTag: string) => {
-    if (!availableTags.includes(newTag)) {
-      setAvailableTags([...availableTags, newTag].sort())
+  // 新增标签
+  const addNewTag = async (tag: Category) => {
+    const tagsToInsert = {
+      title: tag.title,
+      category_id: tag.category_id,
+      create_time: tag.create_time,
+      update_time: tag.update_time || tag.create_time
     }
+    const { error: insertTagsError } = await supabase
+      .from('post_categories')
+      .upsert(tagsToInsert, { onConflict: 'title' })
+    if (insertTagsError) {
+      return showToast(insertTagsError?.message, 'error')
+    }
+    showToast('保存成功!', 'success')
+    //
   }
   return {
     availableTags,

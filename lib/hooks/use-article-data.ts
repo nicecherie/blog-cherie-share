@@ -75,23 +75,23 @@ export const useArticleData = ({
     e.preventDefault()
     setIsSaving(true)
 
-    const supabase = getSuabaseClient()
-    const {
-      data: { session }
-    } = await supabase.auth.getSession()
+    // const supabase = getSuabaseClient()
+    // const {
+    //   data: { session }
+    // } = await supabase.auth.getSession()
 
     // TODO: check if user is logged in
-    const { data: userData } = await supabase.auth.getUser()
-    if (!userData.user) {
-      console.error('User not logged in')
-      const postData = { ...articleData, content }
-      localStorage.setItem('unsavePost', JSON.stringify(postData))
-      // TODO: 跳转至文章编辑页，后续可以去缓存中拿文章数据
-      const redirectUrl = `/write${editSlug ? `?edit=${editSlug}` : ''}`
-      // router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
-      setIsSaving(false)
-      return
-    }
+    // const { data: userData } = await supabase.auth.getUser()
+    // if (!userData.user) {
+    //   console.error('User not logged in')
+    //   const postData = { ...articleData, content }
+    //   localStorage.setItem('unsavePost', JSON.stringify(postData))
+    //   // TODO: 跳转至文章编辑页，后续可以去缓存中拿文章数据
+    //   const redirectUrl = `/write${editSlug ? `?edit=${editSlug}` : ''}`
+    //   // router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
+    //   setIsSaving(false)
+    //   return
+    // }
     const generateSlug = (title: string) => {
       const slug =
         title
@@ -108,43 +108,65 @@ export const useArticleData = ({
     try {
       // 上传 tags 到数据库
       const supabase = getSuabaseClient()
+      console.log('articleData:::', articleData)
+
       if (newlyCreatedTag.length > 0) {
         // newlyCreatedTag: ['react', 'next']
         console.log('newlyCreatedTag', newlyCreatedTag)
         // 把 newlyCreatedTag 数组中每一项添加到 tagsToInsert 中，并设置属性名为 title
         // 判断 数据中是否已经存在，如不存在，则添加 created_at 字段，否则，添加 updated_at 字段
+
+        const slug = editSlug || generateSlug(articleData.title)
+        const { error: insertPostError, data: insertPostData } = await supabase
+          .from('posts')
+          .upsert(
+            {
+              slug,
+              title: articleData.title,
+              // date: articleData.date,
+              author_name: session?.user.user_metadata.full_name,
+              // read_time: articleData.readTime === '' ? null : articleData.readTime,
+              tags: articleData.tags,
+              content,
+              visibility: articleData.visibility,
+
+              // lastModified: new Date().toISOString(),
+              author_id: session?.user.id
+              // github_url: articleData.github_url
+            },
+            { onConflict: 'slug' }
+          )
+        if (insertPostError) throw insertPostError
+
+        // TODO 保存文章 和 分类之间的关系
         // TODO: 获取数据库中已存在的 tag，判断是否要给新的 created_at 或 updated_at
-        const tagsToInsert = newlyCreatedTag.map((tag) => ({
-          title: tag,
-          create: new Date()
+        // 文章id -> [{categrory_id, title}, {categrory_id-2, title-2}]
+        // TODO: 从页面中获取真实数据
+        const selectedCates = [
+          { category_id: 123, title: 'tag-1' },
+          { category_id: 456, title: 'tag-2' }
+        ]
+
+        const insertRelData = selectedCates.map((cate) => ({
+          // @ts-ignore
+          post_id: insertPostData.id,
+          category_id: cate.category_id
         }))
-        const { error: insertTagsError } = await supabase
-          .from('post_categories')
-          .upsert(tagsToInsert, { onConflict: 'title' })
-        if (insertTagsError) {
-          showToast(insertTagsError?.message, 'error')
-        }
+
+        const { data, error } = await supabase
+          .from('cate_post_rel')
+          .insert(insertRelData)
+        // const tagsToInsert = newlyCreatedTag.map((tag) => ({
+        //   title: tag,
+        //   create: new Date()
+        // }))
+        // const { error: insertTagsError } = await supabase
+        //   .from('post_categories')
+        //   .upsert(tagsToInsert, { onConflict: 'title' })
+        // if (insertTagsError) {
+        //   showToast(insertTagsError?.message, 'error')
+        // }
       }
-
-      const slug = editSlug || generateSlug(articleData.title)
-      const { error: insertPostError } = await supabase.from('posts').upsert(
-        {
-          slug,
-          title: articleData.title,
-          // date: articleData.date,
-          author_name: session?.user.user_metadata.full_name,
-          // read_time: articleData.readTime === '' ? null : articleData.readTime,
-          tags: articleData.tags,
-          content,
-          visibility: articleData.visibility,
-
-          // lastModified: new Date().toISOString(),
-          author_id: session?.user.id
-          // github_url: articleData.github_url
-        },
-        { onConflict: 'slug' }
-      )
-      if (insertPostError) throw insertPostError
 
       localStorage.removeItem('unsavedPost')
       // toast 提示用户保存成功

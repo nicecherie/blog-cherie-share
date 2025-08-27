@@ -21,13 +21,13 @@
   --color-destructive-foreground: hsl(210 40% 98%);
   --color-border: hsl(214.3 31.8% 91.4%);
   --color-input: hsl(214.3 31.8% 91.4%);
-  --color-ring: #da9852;
+  --color-ring: var(--color-primary);
   --color-ring-foreground: #ffcb6f;
   --color-popover-foreground: hsl(222.2 84% 4.9%);
   --color-popover: hsl(0 0% 100%);
 
-  --color-selected: #27c24b;
-  --color-tag-bg: #da9852;
+  --color-selected: var(--color-primary);
+  --color-tag-bg: var(--color-primary);
 
   /* --text-popover-foreground: hsl(222.2 47.4% 11.2%); */
   --radius-xs: 0.5rem;

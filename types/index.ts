@@ -23,10 +23,10 @@ export interface User {
 }
 
 export interface Category {
-  category_id: string
-  name: string
+  category_id: string | number
   title: string
-  description: string | null
+  create_time?: string
+  update_time?: string
 }
 
 export interface Comment {

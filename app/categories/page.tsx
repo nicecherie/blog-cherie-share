@@ -1,3 +1,4 @@
+// 'use client'
 import { createServerClient } from '@/lib/supabase/server'
 import { Category, Post } from '@/types'
 import Link from 'next/link'
@@ -8,19 +9,33 @@ interface categoriesPost extends Category {
 async function getCategories() {
   const supabase = createServerClient()
 
-  const { data: categories, error } = await supabase
-    .from('post_categories')
-    .select('*,posts(*)')
+  // const { data: categories, error } = await supabase.from('post_categories')
+  //   .select(`
+  //   category_id,
+  //   title,
+  //   cate_post_rel (
+  //     posts (
+  //       id,
+  //       title,
+  //       content
+  //     )
+  //   )
+  // `)
+  const { data: categories, error } = await supabase.rpc(
+    'get_categories_with_posts'
+  )
+
   if (error) {
     console.log('error', error)
     return []
   }
+  console.log('categories', categories)
+
   return categories as categoriesPost[]
 }
 
 export default async function Categories() {
   const categories = await getCategories()
-  console.log(categories)
 
   return (
     <div className="container mx-auto px-4 py-5">
@@ -35,7 +50,7 @@ export default async function Categories() {
                 {cate.title}
               </h2>
               <span className="text-sm text-muted-foreground">
-                共 {cate.posts.length} 篇文章
+                共 {cate.posts?.length} 篇文章
               </span>
               {/* <div className="all">{JSON.stringify(cate)}</div> */}
             </div>
