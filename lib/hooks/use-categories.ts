@@ -78,6 +78,8 @@ export const useTags = () => {
   // 新增标签
   const addNewTag = async (tag: Category) => {
     const tagsToInsert = {
+      // author_id: session?.user.id,
+      // author_name: session?.user.user_metadata.full_name,
       title: tag.title,
       category_id: tag.category_id,
       create_time: tag.create_time,

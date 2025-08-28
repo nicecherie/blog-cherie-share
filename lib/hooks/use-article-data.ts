@@ -3,38 +3,43 @@ import React, { useEffect, useState } from 'react'
 import { getSuabaseClient } from '../supabase/client'
 import { useToast } from '@/components/toast/toast-provider'
 // import { useRouter } from 'next/navigation'
+import { Category } from '@/types'
+import { v4 as uuid } from 'uuid'
 
 interface ArticleData {
+  id: string
   title: string
   date: string
   author: string
   visibility: 'public' | 'private'
   readTime: number | ''
-  tags: string[]
+  tags: Category[]
   content: string
   github_url: string
 }
 
 interface useArticleDataProps {
+  id: string | null
   editSlug: string | null
   content: string
   setContent: (content: string) => void
   setIsSaving: (saving: boolean) => void
   initialPost?: {
-    id: number
+    id: number | string
     slug: string
     title: string
     content: string
     date: string
     author: string
     readTime: number | null
-    tags: string[]
+    tags: Category[]
     lastModified?: string | null
     github_url: string
   }
 }
 
 export const useArticleData = ({
+  id: id,
   editSlug,
   content,
   setContent,
@@ -42,6 +47,7 @@ export const useArticleData = ({
   initialPost
 }: useArticleDataProps) => {
   const [articleData, setArticleData] = useState<ArticleData>({
+    id: '',
     title: '',
     date: '',
     author: '',
@@ -53,32 +59,26 @@ export const useArticleData = ({
   })
   // const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
-  const [newlyCreatedTag, setNewlyCreatedTag] = useState<string[]>([])
 
   const { showToast } = useToast()
   const updateArticleData = (
     field: keyof ArticleData,
-    value: string | number | string[]
+    value: string | number | string[] | Category[]
   ) => {
     setArticleData((prevData) => ({
       ...prevData,
       [field]: value
     }))
   }
-  const handleNewTagCreated = async (newTag: string) => {
-    if (!newlyCreatedTag.includes(newTag)) {
-      setNewlyCreatedTag([...newlyCreatedTag, newTag])
-    }
-  }
 
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSaving(true)
 
-    // const supabase = getSuabaseClient()
-    // const {
-    //   data: { session }
-    // } = await supabase.auth.getSession()
+    const supabase = getSuabaseClient()
+    const {
+      data: { session }
+    } = await supabase.auth.getSession()
 
     // TODO: check if user is logged in
     // const { data: userData } = await supabase.auth.getUser()
@@ -110,64 +110,46 @@ export const useArticleData = ({
       const supabase = getSuabaseClient()
       console.log('articleData:::', articleData)
 
-      if (newlyCreatedTag.length > 0) {
-        // newlyCreatedTag: ['react', 'next']
-        console.log('newlyCreatedTag', newlyCreatedTag)
-        // 把 newlyCreatedTag 数组中每一项添加到 tagsToInsert 中，并设置属性名为 title
-        // 判断 数据中是否已经存在，如不存在，则添加 created_at 字段，否则，添加 updated_at 字段
+      const slug = editSlug || generateSlug(articleData.title)
+      articleData.id = uuid()
+      const { error: insertPostError, data: insertPostData } = await supabase
+        .from('posts')
+        .upsert(
+          {
+            id: articleData.id,
+            slug,
+            title: articleData.title,
+            // date: articleData.date,
+            author_name: session?.user.user_metadata.full_name,
+            // read_time: articleData.readTime === '' ? null : articleData.readTime,
+            tags: articleData.tags,
+            content,
+            visibility: articleData.visibility,
 
-        const slug = editSlug || generateSlug(articleData.title)
-        const { error: insertPostError, data: insertPostData } = await supabase
-          .from('posts')
-          .upsert(
-            {
-              slug,
-              title: articleData.title,
-              // date: articleData.date,
-              author_name: session?.user.user_metadata.full_name,
-              // read_time: articleData.readTime === '' ? null : articleData.readTime,
-              tags: articleData.tags,
-              content,
-              visibility: articleData.visibility,
+            // lastModified: new Date().toISOString(),
+            author_id: session?.user.id
+            // github_url: articleData.github_url
+          },
+          { onConflict: 'slug' }
+        )
+      if (insertPostError) throw insertPostError
 
-              // lastModified: new Date().toISOString(),
-              author_id: session?.user.id
-              // github_url: articleData.github_url
-            },
-            { onConflict: 'slug' }
-          )
-        if (insertPostError) throw insertPostError
+      // TODO 保存文章 和 分类之间的关系
+      // TODO: 获取数据库中已存在的 tag，判断是否要给新的 created_at 或 updated_at
+      // 文章id -> [{categrory_id, title}, {categrory_id-2, title-2}]
+      // TODO: 从页面中获取真实数据
 
-        // TODO 保存文章 和 分类之间的关系
-        // TODO: 获取数据库中已存在的 tag，判断是否要给新的 created_at 或 updated_at
-        // 文章id -> [{categrory_id, title}, {categrory_id-2, title-2}]
-        // TODO: 从页面中获取真实数据
-        const selectedCates = [
-          { category_id: 123, title: 'tag-1' },
-          { category_id: 456, title: 'tag-2' }
-        ]
-
-        const insertRelData = selectedCates.map((cate) => ({
-          // @ts-ignore
-          post_id: insertPostData.id,
-          category_id: cate.category_id
-        }))
-
-        const { data, error } = await supabase
-          .from('cate_post_rel')
-          .insert(insertRelData)
-        // const tagsToInsert = newlyCreatedTag.map((tag) => ({
-        //   title: tag,
-        //   create: new Date()
-        // }))
-        // const { error: insertTagsError } = await supabase
-        //   .from('post_categories')
-        //   .upsert(tagsToInsert, { onConflict: 'title' })
-        // if (insertTagsError) {
-        //   showToast(insertTagsError?.message, 'error')
-        // }
+      const insertRelData = articleData.tags.map((cate) => ({
+        // @ts-ignore
+        post_id: articleData.id,
+        cate_id: cate.category_id
+      }))
+      const { data, error } = await supabase
+        .from('cate_post_rel')
+        .insert(insertRelData)
+      if (error) {
+        showToast(error.message, 'error')
       }
-
       localStorage.removeItem('unsavedPost')
       // toast 提示用户保存成功
       showToast('提交成功！', 'success')
@@ -191,7 +173,6 @@ export const useArticleData = ({
     articleData,
     isEditing,
     updateArticleData,
-    handleNewTagCreated,
     handleSave
   }
 }

@@ -1,12 +1,16 @@
+import { BlogPostCard } from '@/components/blog-post-card'
 import { createServerClient } from '@/lib/supabase/server'
 
-async function getPostsByCategory(title: string) {
+async function getPostsByCategory(id: string) {
   const supabase = createServerClient()
 
-  const { data: posts, error } = await supabase
-    .from('post_categories')
-    .select('*,posts(*)')
-    .contains('tags', [title])
+  // const { data: posts, error } = await supabase
+  //   .from('post_categories')
+  //   .select('*,posts(*)')
+  //   .contains('tags', [title])
+  const { data: posts, error } = await supabase.rpc('get_posts_by_category', {
+    cid: id
+  })
   console.log('posts', posts)
   if (error) {
     console.log('error', error)
@@ -15,21 +19,24 @@ async function getPostsByCategory(title: string) {
   if (!posts || posts.length === 0) return []
   return posts
 }
-
+interface Post {
+  id: string
+  title: string
+  content: string
+  created_at: string
+}
 export default async function CategoryPage({
   params
 }: {
-  params: { title: string }
+  params: { id: string }
 }) {
-  // const posts = await getPostsByCategory(params.title)
-  // console.log('posts', posts)
+  const posts = await getPostsByCategory(params.id)
   return (
     <div className="container mx-auto">
-      <h1 className="text-3xl font-bold">Category</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {/* {posts.map((post) => (
-          <h1>{post}</h1>
-        ))} */}
+        {posts.map((post: Post) => (
+          <BlogPostCard key={post.id} post={post} />
+        ))}
       </div>
     </div>
   )

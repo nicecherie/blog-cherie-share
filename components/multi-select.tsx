@@ -11,7 +11,7 @@ interface MultiselectProps {
   isInput?: boolean
   placeholder?: string
   tagsLoading: boolean
-  onTagsChange: (tags: Category[]) => void
+  onTagsChange?: (tags: Category[]) => void
   onNewTagCreated: (tag: Category) => void
 }
 export default function TagsMultiselect({

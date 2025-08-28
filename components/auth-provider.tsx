@@ -24,6 +24,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 检查用户状态
     supabase.auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null)
+      // const { data: userData } = await supabase.auth.getUser()
+      // if (!userData.user) {
+      //   console.error('User not logged in')
+      //   const postData = { ...articleData, content }
+      //   localStorage.setItem('unsavePost', JSON.stringify(postData))
+      //   // TODO: 跳转至文章编辑页，后续可以去缓存中拿文章数据
+      //   const redirectUrl = `/write${editSlug ? `?edit=${editSlug}` : ''}`
+      //   // router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
+      //   setIsSaving(false)
+      //   return
+      // }
       setLoading(false)
     })
 
@@ -31,20 +42,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      // 写入用户信息
-      supabase
-        .from('users')
-        .upsert({
-          id: session?.user.id,
-          email: session?.user.email,
-          username: session?.user.user_metadata.user_name,
-          name: session?.user.user_metadata.name,
-          avatar_url: session?.user.user_metadata.avatar_url,
-          bio: session?.user.user_metadata.bio
-        })
-        .then((resp) => {
-          console.log(resp)
-        })
       setLoading(false)
     })
     // console.log('subscription', subscription)

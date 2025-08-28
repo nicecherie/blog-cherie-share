@@ -12,18 +12,13 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
   const { content, setContent, isSaving, setIsSaving } = useEditor()
   const searchParams = useSearchParams()
   const editSlug = searchParams.get('edit')
-  const {
-    articleData,
-    isEditing,
-    updateArticleData,
-    handleNewTagCreated,
-    handleSave
-  } = useArticleData({
-    editSlug,
-    content,
-    setContent,
-    setIsSaving
-  })
+  const { articleData, isEditing, updateArticleData, handleSave } =
+    useArticleData({
+      editSlug,
+      content,
+      setContent,
+      setIsSaving
+    })
   const [collapsed, setCollapsed] = useState(true)
   const { availableTags, tagsLoading, addNewTag } = useTags()
   const [githubUrl, setGithubUrl] = useState(articleData.github_url ?? '')
@@ -38,10 +33,6 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
     updateArticleData('github_url', value)
   }
 
-  const handleNewTagCreatedWithUpdate = (tag: string) => {
-    addNewTag(tag)
-    handleNewTagCreated(tag)
-  }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // 提交表单
@@ -72,7 +63,6 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             onAuthorChange={(val) => updateArticleData('author', val)}
             onReadTimeChange={(val) => updateArticleData('readTime', val)}
             onTagsChange={(val) => updateArticleData('tags', val)}
-            onNewTagCreated={handleNewTagCreatedWithUpdate}
           />
           {/* markdown */}
           <div className="bg-card mt-2">{children}</div>

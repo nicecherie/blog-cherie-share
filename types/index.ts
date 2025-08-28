@@ -1,14 +1,14 @@
 export interface Post {
   id: string
   title: string
-  slug: string
+  // slug: string
   content: string
-  excerpt: string | null
-  author_id: string
-  published: boolean
-  is_public: boolean
+  // excerpt: string | null
+  // author_id: string
+  // published: boolean
+  // is_public: boolean
   created_at: string
-  updated_at: string
+  updated_at?: string
   author?: User
   categories?: Category[]
 }
@@ -45,7 +45,7 @@ export interface ArticleFormProps {
   author: string
   visibility: 'public' | 'private'
   readTime: number | ''
-  tags: string[]
+  tags: Category[]
   availableTags: string[]
   tagsLoading: boolean
   editSlug: string | null

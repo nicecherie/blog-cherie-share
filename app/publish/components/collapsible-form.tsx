@@ -8,12 +8,10 @@ import {
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/Lable'
-import { Textarea } from '@/components/ui/textarea'
 import { LuChevronUp, LuChevronDown } from 'react-icons/lu'
-import { useState } from 'react'
 import { CollapsibleFormProps, ArticleFormProps, Category } from '@/types'
-import TagsMultiselect from '@/components/tags-multiselect'
-import { useTags } from '@/lib/hooks/use-tags'
+import Multiselect from '@/components/multi-select'
+import { useTags } from '@/lib/hooks/use-categories'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 
 export default function CollapsibleForm({
@@ -33,9 +31,7 @@ export default function CollapsibleForm({
   onTitleChange,
   onDateChange,
   onAuthorChange,
-  onReadTimeChange,
-  onTagsChange,
-  onNewTagCreated
+  onReadTimeChange
 }: CollapsibleFormProps) {
   const { availableTags, tagsLoading, addNewTag } = useTags()
   const handleRadioChange = (value: string) => {
@@ -72,12 +68,12 @@ export default function CollapsibleForm({
             </div>
             <div className="space-y-2 form-items">
               <Label htmlFor="title">类别</Label>
-              <TagsMultiselect
+
+              <Multiselect
                 options={availableTags}
                 value={tags}
                 tagsLoading={tagsLoading}
-                onTagsChange={onTagsChange}
-                onNewTagCreated={onNewTagCreated}
+                onNewTagCreated={addNewTag}
               />
             </div>
             <div className="space-y-2 form-items">
