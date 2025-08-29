@@ -14,6 +14,7 @@ const AddCate = () => {
   const { addNewTag } = useTags()
   const [category, setCategory] = useState('')
   const addCate = async () => {
+    if (!category.trim()) return setCategory('')
     const cate = {
       category_id: uuid(),
       title: category,
@@ -31,7 +32,7 @@ const AddCate = () => {
         }`}
       >
         <Input
-          className="w-50"
+          className="w-50 rounded-r-none"
           id="category"
           placeholder="请输入类别"
           type="category"
@@ -39,7 +40,7 @@ const AddCate = () => {
           value={category}
           onChange={(e) => setCategory(e.target.value)}
         ></Input>
-        <Button type="button" onClick={addCate}>
+        <Button className="rounded-l-none" type="button" onClick={addCate}>
           添加类别
         </Button>
       </div>

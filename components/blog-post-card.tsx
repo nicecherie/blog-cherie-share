@@ -1,11 +1,10 @@
 'use client'
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardHeader, CardContent } from '@/components/ui/card'
 import Link from 'next/link'
 import { formatDate } from '@/lib/utils'
 import { useEffect, useState } from 'react'
-
 import { Post } from '@/types'
+
 interface BlogPostCardProps {
   post: Post
 }
@@ -16,7 +15,8 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
     post.author?.display_name ||
     post.author?.username ||
     '未知作者'
-  const [plainText, setPlainText] = useState('')
+
+  const [excerpt, setExcerpt] = useState('')
 
   useEffect(() => {
     const extractTextFromHTML = (htmlString: string) => {
@@ -25,33 +25,46 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
       return div.textContent || div.innerText || ''
     }
 
-    setPlainText(extractTextFromHTML(post.content))
+    const plainText = extractTextFromHTML(post.content).trim()
+    const maxLength = 160
+    setExcerpt(
+      plainText.slice(0, maxLength) +
+        (plainText.length > maxLength ? '...' : '')
+    )
   }, [post.content])
-  // 生成60-150之间的随机数
-  const randomLength = Math.floor(Math.random() * (150 - 60 + 1)) + 60
+
   return (
-    <Card className="flex flex-col h-fit">
-      <CardHeader>
-        <div className="text-sm text-muted-foreground mb-1">
-          {formatDate(post.created_at)} · {author}
-        </div>
-        <h1>{post.title}</h1>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <p className="text-muted-foreground line-clamp-5 md:line-clamp-3">
-          {/* content 中包含了 html 标签，如何处理 */}
-          {/* 生成 60-150 的随机数去截取 content */}
-          {/* 截取后的内容 */}
-          {plainText.substring(0, randomLength)}
-        </p>
-      </CardContent>
-      <CardFooter>
-        <Link href={`/blog/${post.id}`} className="w-full">
-          <Button variant="outline" className="w-full">
-            阅读全文
-          </Button>
-        </Link>
-      </CardFooter>
-    </Card>
+    <Link href={`/blog/${post.id}`} className="block break-inside-avoid mb-6">
+      <Card
+        className="group flex flex-col rounded-2xl bg-background 
+                   border border-border/40 shadow-sm
+                   cursor-pointer transition-all duration-300 
+                   hover:shadow-lg hover:-translate-y-1 active:scale-95"
+      >
+        <CardHeader className="space-y-2">
+          {/* 日期 + 作者 */}
+          <div className="text-xs text-muted-foreground flex items-center gap-2">
+            <span>{formatDate(post.created_at)}</span>
+            <span>·</span>
+            <span>{author}</span>
+          </div>
+
+          {/* 标题 */}
+          <h2
+            className="text-xl font-semibold tracking-tight 
+                       text-foreground group-hover:text-primary transition-colors"
+          >
+            {post.title}
+          </h2>
+        </CardHeader>
+
+        {/* 摘要 */}
+        <CardContent>
+          <p className="text-muted-foreground leading-relaxed line-clamp-3">
+            {excerpt}
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }

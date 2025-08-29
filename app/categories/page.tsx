@@ -9,19 +9,6 @@ interface categoriesPost extends Category {
 }
 async function getCategories() {
   const supabase = createServerClient()
-
-  // const { data: categories, error } = await supabase.from('post_categories')
-  //   .select(`
-  //   category_id,
-  //   title,
-  //   cate_post_rel (
-  //     posts (
-  //       id,
-  //       title,
-  //       content
-  //     )
-  //   )
-  // `)
   const { data: categories, error } = await supabase.rpc(
     'get_categories_with_posts'
   )
@@ -32,7 +19,6 @@ async function getCategories() {
     console.log('error', error)
     return []
   }
-  console.log('categories', categories)
 
   return categories as categoriesPost[]
 }

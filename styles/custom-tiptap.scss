@@ -28,6 +28,7 @@
     line-height: 1.1;
     margin-top: 2.5rem;
     text-wrap: pretty;
+    scroll-margin-top: 120px; /* 这里的 120px 取决于你的导航高度 */
   }
 
   h1,

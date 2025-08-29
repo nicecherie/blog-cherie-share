@@ -148,7 +148,11 @@ export default function RichTextPreview(post: Post) {
   return (
     <div className="flex my-5">
       {/* 桌面端目录 */}
-      <aside className="w-64 shrink-0 h-fit sticky top-28 overflow-y-auto p-4 hidden md:block">
+      <aside
+        className="scrollbar-thin w-64 shrink-0 sticky top-28 
+             max-h-[calc(100vh-12rem)] overflow-y-auto 
+             p-4 hidden md:block"
+      >
         <h2 className="font-bold mb-3">目录</h2>
         <ul className="space-y-1 text-sm">
           {headings.map((h) => (
