@@ -12,8 +12,10 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
   const { content, setContent, isSaving, setIsSaving } = useEditor()
   const searchParams = useSearchParams()
   const editSlug = searchParams.get('edit')
+  const id = searchParams.get('id')
   const { articleData, isEditing, updateArticleData, handleSave } =
     useArticleData({
+      id,
       editSlug,
       content,
       setContent,

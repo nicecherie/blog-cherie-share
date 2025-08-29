@@ -5,6 +5,7 @@ import { useToast } from '@/components/toast/toast-provider'
 // import { useRouter } from 'next/navigation'
 import { Category } from '@/types'
 import { v4 as uuid } from 'uuid'
+import { useRouter } from 'next/navigation'
 
 interface ArticleData {
   id: string
@@ -39,7 +40,7 @@ interface useArticleDataProps {
 }
 
 export const useArticleData = ({
-  id: id,
+  id,
   editSlug,
   content,
   setContent,
@@ -57,7 +58,7 @@ export const useArticleData = ({
     content: '',
     github_url: ''
   })
-  // const router = useRouter()
+  const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
 
   const { showToast } = useToast()
@@ -79,7 +80,12 @@ export const useArticleData = ({
     const {
       data: { session }
     } = await supabase.auth.getSession()
+    console.log(articleData.content)
 
+    if (!content) {
+      setIsSaving(false)
+      return showToast('请填写文章内容', 'error')
+    }
     // TODO: check if user is logged in
     // const { data: userData } = await supabase.auth.getUser()
     // if (!userData.user) {
@@ -108,7 +114,6 @@ export const useArticleData = ({
     try {
       // 上传 tags 到数据库
       const supabase = getSuabaseClient()
-      console.log('articleData:::', articleData)
 
       const slug = editSlug || generateSlug(articleData.title)
       articleData.id = uuid()
@@ -134,10 +139,10 @@ export const useArticleData = ({
         )
       if (insertPostError) throw insertPostError
 
-      // TODO 保存文章 和 分类之间的关系
-      // TODO: 获取数据库中已存在的 tag，判断是否要给新的 created_at 或 updated_at
+      //  保存文章 和 分类之间的关系
+      //  获取数据库中已存在的 tag，判断是否要给新的 created_at 或 updated_at
       // 文章id -> [{categrory_id, title}, {categrory_id-2, title-2}]
-      // TODO: 从页面中获取真实数据
+      //  从页面中获取真实数据
 
       const insertRelData = articleData.tags.map((cate) => ({
         // @ts-ignore
@@ -153,6 +158,8 @@ export const useArticleData = ({
       localStorage.removeItem('unsavedPost')
       // toast 提示用户保存成功
       showToast('提交成功！', 'success')
+      // 跳转至首页
+      router.push('/')
     } catch (err: unknown) {
       const errorMessage = '保存失败，请检查网络或联系管理员。'
       if (err && typeof err === 'object' && 'message' in err) {
@@ -163,7 +170,7 @@ export const useArticleData = ({
       } else {
         console.error('Error saving post:', errorMessage)
       }
-      // TODO: toast 提示用户错误
+      //  toast 提示用户错误
       showToast(errorMessage, 'error')
     } finally {
       setIsSaving(false)

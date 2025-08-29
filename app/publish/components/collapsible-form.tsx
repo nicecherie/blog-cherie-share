@@ -31,7 +31,8 @@ export default function CollapsibleForm({
   onTitleChange,
   onDateChange,
   onAuthorChange,
-  onReadTimeChange
+  onReadTimeChange,
+  onTagsChange
 }: CollapsibleFormProps) {
   const { availableTags, tagsLoading, addNewTag } = useTags()
   const handleRadioChange = (value: string) => {
@@ -74,6 +75,7 @@ export default function CollapsibleForm({
                 value={tags}
                 tagsLoading={tagsLoading}
                 onNewTagCreated={addNewTag}
+                onTagsChange={onTagsChange}
               />
             </div>
             <div className="space-y-2 form-items">

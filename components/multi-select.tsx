@@ -63,7 +63,8 @@ export default function TagsMultiselect({
         title: newTag,
         create_time: new Date().toISOString()
       }
-      onTagsChange([...value, createTag])
+      const newValue = value.concat(createTag)
+      onTagsChange && onTagsChange(newValue)
       onNewTagCreated(createTag as Category)
     }
     setInput('')
@@ -121,7 +122,7 @@ export default function TagsMultiselect({
     },
     Backspace: () => {
       if (input === '' && input.length > 0) {
-        onTagsChange(value.slice(0, -1))
+        onTagsChange && onTagsChange(value.slice(0, -1))
       }
     }
   }
@@ -141,7 +142,7 @@ export default function TagsMultiselect({
     const isExist = value.some((item) => item.category_id === opt.category_id)
 
     if (!isExist) {
-      onTagsChange([...value, opt])
+      onTagsChange && onTagsChange(value.concat(opt))
     }
     setInput('')
     setIsOpen(true)
@@ -167,9 +168,10 @@ export default function TagsMultiselect({
               onClick={(e) => {
                 console.log(e, 'eeeeeeee')
                 e.stopPropagation()
-                onTagsChange(
-                  value.filter((v) => v.category_id !== opts.category_id)
-                )
+                onTagsChange &&
+                  onTagsChange(
+                    value.filter((v) => v.category_id !== opts.category_id)
+                  )
               }}
             >
               ×

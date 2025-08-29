@@ -57,8 +57,7 @@ export interface ArticleFormProps {
   onDateChange: (value: string) => void
   onAuthorChange: (value: string) => void
   onReadTimeChange: (value: number | '') => void
-  onTagsChange: (value: string[]) => void
-  onNewTagCreated: (tag: string) => void
+  onTagsChange: (value: Category[]) => void
 }
 
 export interface CollapsibleFormProps extends ArticleFormProps {
