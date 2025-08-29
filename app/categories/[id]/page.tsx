@@ -24,13 +24,16 @@ interface Post {
   title: string
   content: string
   created_at: string
+  author_name: string
 }
 export default async function CategoryPage({
   params
 }: {
   params: { id: string }
 }) {
-  const posts = await getPostsByCategory(params.id)
+  // 路由参数必须先使用 await 获取
+  const { id: cateId } = await params
+  const posts = await getPostsByCategory(cateId)
   return (
     <div className="container mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

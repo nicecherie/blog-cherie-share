@@ -6,7 +6,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { LoadingProvider } from '@/components/loading'
 import Footer from '@/components/footer'
-
+import ScrollToTop from '@/components/ui/scroll-to-top'
 export const metadata: Metadata = {
   title: "cherie's blog",
   description: 'Work in progress'
@@ -29,6 +29,7 @@ export default function RootLayout({
                   <LoadingProvider>{children}</LoadingProvider>
                 </main>
                 <Footer />
+                <ScrollToTop />
               </div>
             </ToastProvider>
           </AuthProvider>
