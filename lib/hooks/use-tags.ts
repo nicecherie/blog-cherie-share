@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getSuabaseClient } from '../supabase/client'
+import { getSupabaseClient } from '../supabase/client'
 
 export const useTags = () => {
   const [availableTags, setAvailableTags] = useState<string[]>([])
@@ -10,7 +10,7 @@ export const useTags = () => {
   useEffect(() => {
     // 获取所有标签
     const fetchTags = async () => {
-      const supabase = getSuabaseClient()
+      const supabase = getSupabaseClient()
       const {
         data: { session }
       } = await supabase.auth.getSession()

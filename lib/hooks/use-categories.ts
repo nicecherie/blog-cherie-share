@@ -1,13 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { getSuabaseClient } from '../supabase/client'
+import { getSupabaseClient } from '../supabase/client'
 import { Category } from '@/types'
 import { useToast } from '@/components/toast/toast-provider'
 export const useTags = () => {
   const [availableTags, setAvailableTags] = useState<Category[]>([])
   const [tagsLoading, setTagsLoading] = useState(false)
-  const supabase = getSuabaseClient()
+  const supabase = getSupabaseClient()
   const { showToast } = useToast()
 
   useEffect(() => {

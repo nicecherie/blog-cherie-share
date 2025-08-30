@@ -36,8 +36,8 @@ export function BlogPostCard({ post }: BlogPostCardProps) {
   return (
     <Link href={`/blog/${post.id}`} className="block break-inside-avoid mb-6">
       <Card
-        className="group flex flex-col rounded-2xl bg-background 
-                   border border-border/40 shadow-sm
+        className="group flex flex-col rounded-2xl bg-background/20 
+                   border border-primary/40 shadow-sm min-h-[13rem]
                    cursor-pointer transition-all duration-300 
                    hover:shadow-lg hover:-translate-y-1 active:scale-95"
       >

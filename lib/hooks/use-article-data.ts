@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import { getSuabaseClient } from '../supabase/client'
+import { getSupabaseClient } from '../supabase/client'
 import { useToast } from '@/components/toast/toast-provider'
 // import { useRouter } from 'next/navigation'
 import { Category } from '@/types'
@@ -76,7 +76,7 @@ export const useArticleData = ({
     e.preventDefault()
     setIsSaving(true)
 
-    const supabase = getSuabaseClient()
+    const supabase = getSupabaseClient()
     const {
       data: { session }
     } = await supabase.auth.getSession()
@@ -113,7 +113,7 @@ export const useArticleData = ({
     }
     try {
       // 上传 tags 到数据库
-      const supabase = getSuabaseClient()
+      const supabase = getSupabaseClient()
 
       const slug = editSlug || generateSlug(articleData.title)
       articleData.id = uuid()

@@ -1,20 +1,22 @@
-import { BlogPostCard } from '@/components/blog-post-card'
 import { createServerClient } from '@/lib/supabase/server'
+import PostsList from '@/components/posts-list'
 
-async function getPosts() {
-  const supabase = createServerClient()
-
-  const { data: posts, error } = await supabase.from('posts').select('*')
-  console.log('posts', posts)
-  return posts
-}
 export default async function Home() {
-  const posts = await getPosts()
+  const supabase = createServerClient()
+  const pageSize = 6
+  const { data, count } = await supabase
+    .from('posts')
+    .select('*', { count: 'exact' })
+    .order('created_at', { ascending: false })
+    .range(0, pageSize - 1)
+
   return (
     <div className="container max-w-7xl mx-auto px-4 py-8">
-      <section>
-        <h1>我的博客</h1>
-      </section>
+      <PostsList
+        initialPosts={data ?? []}
+        totalCount={count ?? 0}
+        pageSize={pageSize}
+      />
     </div>
   )
 }
