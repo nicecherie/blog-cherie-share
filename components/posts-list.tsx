@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { BlogPostCard } from '@/components/blog-post-card'
 import { Button } from '@/components/ui/button'
 import { getSupabaseClient } from '@/lib/supabase/client'
-import { useWithLoading } from '@/lib/hooks/use-loading'
 import { Pagination } from '@/components/ui/pagination'
 import { useLoading } from './loading'
 
@@ -17,7 +16,7 @@ interface PostsListProps {
 export default function PostsList({
   initialPosts,
   totalCount,
-  pageSize = 6
+  pageSize = 12
 }: PostsListProps) {
   const [posts, setPosts] = useState(initialPosts)
   const [sort, setSort] = useState<'latest' | 'oldest' | 'updated'>('latest')
