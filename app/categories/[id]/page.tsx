@@ -27,7 +27,7 @@ export default async function CategoryPage({
   params: { id: string }
 }) {
   // 路由参数必须先使用 await 获取
-  const { id: cateId } = await params
+  const { id: cateId } = params
   const posts = await getPostsByCategory(cateId)
   return (
     <div className="container mx-auto">
