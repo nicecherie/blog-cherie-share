@@ -7,7 +7,6 @@ async function getPostsByCategory(id: string) {
   const { data: posts, error } = await supabase.rpc('get_posts_by_category', {
     cid: id
   })
-  console.log('posts', posts)
   if (error) {
     console.log('error', error)
     return []
