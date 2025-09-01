@@ -21,6 +21,7 @@ export function Header() {
   const { user, signOut } = useAuth()
   const pathname = usePathname()
   const router = useRouter()
+  const isAuthLog = pathname.startsWith('/auth')
 
   return (
     <header
@@ -90,7 +91,7 @@ export function Header() {
                 className="text-red-500 cursor-pointer"
                 onClick={async () => {
                   await signOut()
-                  router.push('/login')
+                  router.push('/auth/login')
                 }}
               >
                 退出登录
@@ -98,8 +99,12 @@ export function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Button variant="outline" size="sm">
-            <Link href="/login">Login</Link>
+          <Button
+            variant="outline"
+            size="sm"
+            className={isAuthLog ? 'hidden' : ''}
+          >
+            <Link href="/auth/login">登录</Link>
           </Button>
         )}
 

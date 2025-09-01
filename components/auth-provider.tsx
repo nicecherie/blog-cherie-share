@@ -1,16 +1,30 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import type { User } from '@supabase/supabase-js'
+import type { User, AuthError, Session } from '@supabase/supabase-js'
 import { getSupabaseClient } from '@/lib/supabase/client'
+import { useToast } from './toast/toast-provider'
+import { useRouter } from 'next/navigation'
 
 type AuthContextType = {
   user: User | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>
-  signUp: (email: string, password: string) => Promise<{ error: Error | null }>
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<{
+    data: { user: User | null; session: Session | null }
+    error: AuthError | null
+  }>
+  signUp: (
+    email: string,
+    password: string
+  ) => Promise<{
+    data: { user: User | null; session: Session | null }
+    error: AuthError | null
+  }>
   signOut: () => Promise<void>
-  signInWithGithub: () => Promise<{ error: Error | null }>
+  signInWithGithub: () => Promise<{ error: AuthError | null }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -19,24 +33,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const supabase = getSupabaseClient()
-  // 只在dom渲染时执行
+  const { showToast } = useToast()
+  const router = useRouter()
+
   useEffect(() => {
-    // 检查用户状态
-    supabase.auth.getSession().then(({ data }) => {
-      setUser(data.session?.user ?? null)
-      // const { data: userData } = await supabase.auth.getUser()
-      // if (!userData.user) {
-      //   console.error('User not logged in')
-      //   const postData = { ...articleData, content }
-      //   localStorage.setItem('unsavePost', JSON.stringify(postData))
-      //   // TODO: 跳转至文章编辑页，后续可以去缓存中拿文章数据
-      //   const redirectUrl = `/write${editSlug ? `?edit=${editSlug}` : ''}`
-      //   // router.push(`/auth/login?redirect=${encodeURIComponent(redirectUrl)}`)
-      //   setIsSaving(false)
-      //   return
-      // }
-      setLoading(false)
-    })
+    const initAuth = async () => {
+      try {
+        const { data, error } = await supabase.auth.getSession()
+        if (error) {
+          console.error('获取 session 失败:', error)
+        }
+        setUser(data?.session?.user ?? null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    initAuth()
 
     const {
       data: { subscription }
@@ -44,36 +56,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(session?.user ?? null)
       setLoading(false)
     })
-    // console.log('subscription', subscription)
+
     return () => subscription.unsubscribe()
-  }, [])
+  }, [supabase])
+
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
-    return { error }
+    if (error) {
+      showToast(error.message, 'error')
+    }
+    if (!data?.session) {
+      showToast('请登录邮箱确认', 'success')
+      router.push('/auth/login')
+    } else {
+      showToast('登录成功', 'success')
+      router.push('/')
+    }
+    return { data, error }
   }
+
   const signUp = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password
-    })
-    return { error }
+    const { data, error } = await supabase.auth.signUp({ email, password })
+
+    if (error) {
+      if (error.message.includes('already registered')) {
+        showToast('该邮箱已注册，请直接登录', 'error')
+      } else {
+        showToast(error.message, 'error')
+      }
+      return { data: { user: null, session: null }, error }
+    }
+
+    // 注册成功，但 Supabase 需要邮箱验证
+    showToast('注册成功，请前往邮箱确认', 'success')
+    router.push('/auth/login')
+
+    return {
+      data: {
+        user: data.user,
+        session: data.session
+      },
+      error: null
+    }
   }
+
   const signOut = async () => {
     await supabase.auth.signOut()
   }
+
   const signInWithGithub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
         redirectTo: `${location.origin}/`,
-        scopes: 'read:user user:email' // 明确请求用户邮箱权限
+        scopes: 'read:user user:email'
       }
     })
     return { error }
   }
+
   return (
     <AuthContext.Provider
       value={{ user, loading, signIn, signUp, signOut, signInWithGithub }}
@@ -85,7 +129,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  // console.log('context', context)
   if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')
   }

@@ -21,8 +21,8 @@ export default function RootLayout({
     <html lang="zh-CN" suppressHydrationWarning>
       <body>
         <ThemeProvider attribute="class" defaultTheme="system">
-          <AuthProvider>
-            <ToastProvider>
+          <ToastProvider>
+            <AuthProvider>
               <div className="flex flex-col min-h-screen">
                 <Header />
                 <main className="flex-1 bg-grid pt-5">
@@ -31,8 +31,8 @@ export default function RootLayout({
                 <Footer />
                 <ScrollToTop />
               </div>
-            </ToastProvider>
-          </AuthProvider>
+            </AuthProvider>
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

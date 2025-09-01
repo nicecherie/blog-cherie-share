@@ -7,7 +7,7 @@ import {
   CollapsibleTrigger
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/Lable'
+import { Label } from '@/components/ui/label'
 import { LuChevronUp, LuChevronDown } from 'react-icons/lu'
 import { CollapsibleFormProps, ArticleFormProps, Category } from '@/types'
 import Multiselect from '@/components/multi-select'
