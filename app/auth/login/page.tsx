@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { DiGithubBadge } from 'react-icons/di'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { useState } from 'react'
 import {
   Card,
   CardHeader,
@@ -15,15 +15,14 @@ import {
   CardFooter
 } from '@/components/ui/card'
 import { useAuth } from '@/components/auth-provider'
-import { useLoading } from '@/components/loading'
 import { mapAuthError } from '@/lib/hooks/auth-errors'
+import { useAuthForm } from '@/lib/hooks/use-auth-form'
 
 export default function Login() {
   const { signIn, signInWithGithub } = useAuth()
-  const { isLoading, setIsLoading } = useLoading()
+  const { email, password, isLoading, setIsLoading, bindEmail, bindPassword } =
+    useAuthForm()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
 
   const handleGitHubLogin = async () => {
@@ -90,9 +89,8 @@ export default function Login() {
                 placeholder="your@email.com"
                 autoComplete="username"
                 required
-                value={email}
                 disabled={isLoading}
-                onChange={(e) => setEmail(e.target.value)}
+                {...bindEmail}
               />
             </div>
             <div>
@@ -103,9 +101,8 @@ export default function Login() {
                 placeholder="输入密码"
                 autoComplete="current-password"
                 required
-                value={password}
                 disabled={isLoading}
-                onChange={(e) => setPassword(e.target.value)}
+                {...bindPassword}
               />
             </div>
 

@@ -4,37 +4,39 @@ import { useState } from 'react'
 import { useLoading } from '@/components/loading'
 
 export function useAuthForm() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
+  const [form, setForm] = useState({
+    email: '',
+    password: '',
+    confirmPassword: ''
+  })
+
   const { isLoading, setIsLoading } = useLoading()
 
-  const bindEmail = {
-    value: email,
+  // 通用绑定函数
+  const bindField = (key: keyof typeof form) => ({
+    value: form[key],
     onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-      setEmail(e.target.value)
-  }
+      setForm((prev) => ({ ...prev, [key]: e.target.value }))
+  })
 
-  const bindPassword = {
-    value: password,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-      setPassword(e.target.value)
-  }
-
-  const bindConfirmPassword = {
-    value: confirmPassword,
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-      setConfirmPassword(e.target.value)
+  // 简单的校验逻辑（可选）
+  const validate = () => {
+    if (!form.email) return '请输入邮箱'
+    if (!form.password) return '请输入密码'
+    if (form.password.length < 6) return '密码至少 6 位'
+    if (form.confirmPassword && form.password !== form.confirmPassword) {
+      return '两次输入的密码不一致'
+    }
+    return null
   }
 
   return {
-    email,
-    password,
-    confirmPassword,
+    ...form,
     isLoading,
     setIsLoading,
-    bindEmail,
-    bindPassword,
-    bindConfirmPassword
+    bindEmail: bindField('email'),
+    bindPassword: bindField('password'),
+    bindConfirmPassword: bindField('confirmPassword'),
+    validate
   }
 }

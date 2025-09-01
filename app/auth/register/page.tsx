@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/card'
 import { useAuth } from '@/components/auth-provider'
 import { useLoading } from '@/components/loading'
+import { mapAuthError } from '@/lib/hooks/auth-errors'
 
 export default function Register() {
   const { signUp, signInWithGithub } = useAuth()
@@ -30,7 +31,7 @@ export default function Register() {
     setIsLoading(true)
     try {
       const { error } = await signInWithGithub()
-      if (error) console.error(error)
+      if (error) setErrorMsg(mapAuthError(error))
     } finally {
       setIsLoading(false)
     }
@@ -48,7 +49,13 @@ export default function Register() {
     setIsLoading(true)
     try {
       const { error } = await signUp(email, password)
-      if (error) setErrorMsg(error.message)
+      if (error) {
+        if (error.message.includes('already registered')) {
+          setErrorMsg('该邮箱已被注册，请直接登录')
+        } else {
+          setErrorMsg(mapAuthError(error))
+        }
+      }
     } finally {
       setIsLoading(false)
     }
