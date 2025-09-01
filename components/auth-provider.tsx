@@ -1,7 +1,12 @@
 'use client'
 
 import { createContext, useContext, useEffect, useState } from 'react'
-import type { User, AuthError, Session } from '@supabase/supabase-js'
+import type {
+  User,
+  AuthError,
+  Session,
+  PostgrestError
+} from '@supabase/supabase-js'
 import { getSupabaseClient } from '@/lib/supabase/client'
 import { useToast } from './toast/toast-provider'
 import { useRouter } from 'next/navigation'
@@ -25,6 +30,14 @@ type AuthContextType = {
   }>
   signOut: () => Promise<void>
   signInWithGithub: () => Promise<{ error: AuthError | null }>
+  // 新增 updateProfile 函数声明
+  updateProfile: (
+    username: string,
+    avatar_url?: string
+  ) => Promise<{
+    data: { user: User | null; session: Session | null }
+    error: AuthError | null
+  }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -117,10 +130,74 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     return { error }
   }
+  const updateProfile = async (username: string, avatar_url?: string) => {
+    if (!user) {
+      return {
+        data: { user: null, session: null },
+        error: { message: '用户未登录', status: 401 } as AuthError
+      }
+    }
+
+    const updates = {
+      id: user.id,
+      username,
+      avatar_url,
+      updated_at: new Date().toISOString()
+    }
+
+    const { data, error } = await supabase.from('users').upsert(updates)
+
+    if (error) {
+      showToast(error.message, 'error')
+      // 将 PostgrestError 转换为 AuthError 类型结构以匹配接口
+      return {
+        data: { user: null, session: null },
+        error: {
+          message: error.message,
+          status: (error as any).status || 500,
+          name: 'PostgrestError'
+        } as AuthError
+      }
+    }
+
+    // 刷新用户信息
+    const { data: userData, error: userError } = await supabase.auth.updateUser(
+      {
+        data: { username, avatar_url }
+      }
+    )
+
+    if (userError) {
+      showToast(userError.message, 'error')
+      return {
+        data: { user: null, session: null },
+        error: userError
+      }
+    }
+
+    setUser(userData.user)
+    showToast('资料更新成功', 'success')
+
+    return {
+      data: {
+        user: userData.user,
+        session: null // session 不变
+      },
+      error: null
+    }
+  }
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signUp, signOut, signInWithGithub }}
+      value={{
+        user,
+        loading,
+        signIn,
+        signUp,
+        signOut,
+        signInWithGithub,
+        updateProfile
+      }}
     >
       {children}
     </AuthContext.Provider>
