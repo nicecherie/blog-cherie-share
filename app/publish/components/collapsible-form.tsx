@@ -108,7 +108,7 @@ export default function CollapsibleForm({
               <Input
                 id="number"
                 type="number"
-                value={readTime}
+                value={readTime ?? ''}
                 onChange={(e) =>
                   onReadTimeChange(
                     e.target.value === '' ? '' : Number(e.target.value)

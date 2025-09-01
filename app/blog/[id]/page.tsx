@@ -8,7 +8,7 @@ interface BlogPostPageProps {
 }
 
 const BlogPostPage = async ({ params }: BlogPostPageProps) => {
-  const { id } = params
+  const { id } = await params
   const supabase = createServerClient()
 
   const { data: post } = await supabase

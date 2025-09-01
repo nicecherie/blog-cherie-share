@@ -1,6 +1,6 @@
 import { BlogPostCard } from '@/components/blog-post-card'
 import { createServerClient } from '@/lib/supabase/server'
-
+import { Post } from '@/types'
 async function getPostsByCategory(id: string) {
   const supabase = createServerClient()
 
@@ -14,26 +14,19 @@ async function getPostsByCategory(id: string) {
   if (!posts || posts.length === 0) return []
   return posts
 }
-interface Post {
-  id: string
-  title: string
-  content: string
-  created_at: string
-  author_name: string
-}
 export default async function CategoryPage({
   params
 }: {
   params: { id: string }
 }) {
   // 路由参数必须先使用 await 获取
-  const { id: cateId } = params
+  const { id: cateId } = await params
   const posts = await getPostsByCategory(cateId)
   return (
     <div className="container mx-auto">
       <div className="columns-1 sm:columns-2 lg:columns-3 gap-4">
         {posts.map((post: Post) => (
-          <BlogPostCard key={post.id} post={post} />
+          <BlogPostCard key={post.id} post={post as Post} />
         ))}
       </div>
     </div>

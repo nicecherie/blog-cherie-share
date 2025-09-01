@@ -6,28 +6,35 @@ import { useEffect, useState } from 'react'
 import { useArticleData } from '@/lib/hooks/use-article-data'
 import { EditorProvider, useEditor } from './context'
 import { useSearchParams } from 'next/navigation'
-
 import { SaveButton } from './components/save-button'
+
 const PublishContent = ({ children }: { children: React.ReactElement }) => {
   const { content, setContent, isSaving, setIsSaving } = useEditor()
   const searchParams = useSearchParams()
   const editSlug = searchParams.get('edit')
   const id = searchParams.get('id')
-  const { articleData, isEditing, updateArticleData, handleSave } =
+
+  const { articleData, updateArticleData, handleSave, isLoaded } =
     useArticleData({
       id,
       editSlug,
+      setIsSaving,
       content,
-      setContent,
-      setIsSaving
+      setContent
     })
+
+  // 当 articleData 更新且不为空时，更新编辑器内容
+  useEffect(() => {
+    if (isLoaded && articleData.content) {
+      setContent(articleData.content)
+    }
+  }, [isLoaded, articleData.content, setContent])
   const [collapsed, setCollapsed] = useState(true)
   const { availableTags, tagsLoading, addNewTag } = useTags()
-  const [githubUrl, setGithubUrl] = useState(articleData.github_url ?? '')
+
+  const [githubUrl, setGithubUrl] = useState('')
   useEffect(() => {
-    if (articleData.github_url) {
-      setGithubUrl(articleData.github_url)
-    }
+    setGithubUrl(articleData.github_url ?? '')
   }, [articleData.github_url])
 
   const handleGithubUrlChange = (value: string) => {
@@ -35,11 +42,11 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
     updateArticleData('github_url', value)
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // 提交表单
-    await handleSave(e)
+    handleSave(e)
   }
+
   return (
     <div className="min-h-screen">
       <div className="container">
@@ -51,7 +58,7 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             date={articleData.date}
             author={articleData.author}
             visibility={articleData.visibility}
-            readTime={articleData.readTime}
+            readTime={articleData.readTime as number}
             tags={articleData.tags}
             availableTags={availableTags}
             tagsLoading={tagsLoading}
@@ -60,13 +67,16 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
             onGithubUrlChange={handleGithubUrlChange}
             onCollapsedChange={setCollapsed}
             onTitleChange={(val) => updateArticleData('title', val)}
-            onVisibilityChange={(val) => updateArticleData('visibility', val)}
+            onVisibilityChange={(val) =>
+              updateArticleData('visibility', val as 'public' | 'private')
+            }
             onDateChange={(val) => updateArticleData('date', val)}
             onAuthorChange={(val) => updateArticleData('author', val)}
-            onReadTimeChange={(val) => updateArticleData('readTime', val)}
+            onReadTimeChange={(val) =>
+              updateArticleData('readTime', val as number)
+            }
             onTagsChange={(val) => updateArticleData('tags', val)}
           />
-          {/* markdown */}
           <div className="bg-card mt-2">{children}</div>
           <SaveButton isSaving={isSaving} />
         </form>
@@ -78,7 +88,6 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
 const PublishLayout = ({ children }: { children: React.ReactElement }) => {
   return (
     <EditorProvider>
-      {/* // TODO: add a loading state */}
       <div className="flex flex-col items-center">
         <div className="w-full max-w-4xl">
           <PublishContent>{children}</PublishContent>

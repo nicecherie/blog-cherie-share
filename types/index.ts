@@ -1,17 +1,21 @@
 export interface Post {
   id: string
   title: string
-  // slug: string
+  slug: string
   content: string
   // excerpt: string | null
   // author_id: string
   // published: boolean
   // is_public: boolean
+  visibility: 'public' | 'private'
+  read_time: number
+  github_url?: string
   created_at: string
   updated_at?: string
+  tags?: Category[]
   author?: User
   author_name: string
-  categories?: Category[]
+  categories: Category[]
 }
 
 export interface User {

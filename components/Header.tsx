@@ -77,9 +77,9 @@ export function Header() {
             <DropdownMenuContent>
               <DropdownMenuLabel>{user.email || '用户'}</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {/* <DropdownMenuItem asChild>
-                <Link href="/dashboard">控制面板</Link>
-              </DropdownMenuItem> */}
+              <DropdownMenuItem asChild>
+                <Link href="/blog">文章管理</Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/publish">创建文章</Link>
               </DropdownMenuItem>
