@@ -23,12 +23,6 @@ const PublishContent = ({ children }: { children: React.ReactElement }) => {
       setContent
     })
 
-  // 当 articleData 更新且不为空时，更新编辑器内容
-  useEffect(() => {
-    if (isLoaded && articleData.content) {
-      setContent(articleData.content)
-    }
-  }, [isLoaded, articleData.content, setContent])
   const [collapsed, setCollapsed] = useState(true)
   const { availableTags, tagsLoading, addNewTag } = useTags()
 

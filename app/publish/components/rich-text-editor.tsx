@@ -43,7 +43,7 @@ import {
   PopoverContent
 } from '@/components/ui/popover'
 import { Input } from '@/components/ui/input'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card } from '@/components/ui/card'
 
 const CustomDocument = Document.extend({
@@ -167,6 +167,11 @@ const RichTextEditor = ({
       onChange(editor.getHTML())
     }
   })
+  useEffect(() => {
+    if (content) {
+      editor?.commands.setContent(content)
+    }
+  }, [content])
   if (!editor) {
     return null
   }
